@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Finn',
+    'title' => 'AdminLTE 3',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Finn</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
-    'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    // Di config/adminlte.php:
+'logo' => $instansi->nama ?? '<b>Admin</b>LTE', // Langsung pakai variabel, bukan Closure
+'logo_img' => isset($instansi) && $instansi->logo 
+    ? 'storage/' . $instansi->logo 
+    : 'vendor/adminlte/dist/img/AdminLTELogo.png',
+'logo_img_alt' => $instansi->nama ?? 'Admin Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -297,103 +297,89 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Menu-Configuration
     |
     */
-
     'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
+    // Item menu Dashboard Utama (selalu tampil untuk semua yang login)
+    [
+        'text'        => 'Dashboard',
+        'url'         => 'dashboard', // Atau 'dashboard.main' jika Anda pakai route() helper
+        'icon'        => 'fas fa-fw fa-tachometer-alt',
+        'can'         => 'user', // Tampil jika user terautentikasi (gate 'user' selalu true)
+    ],
+
+    // Menu khusus Admin (tampil jika user memiliki gate 'admin')
+[
+        'text' => 'INSTANSI',
+        'icon' => 'fas fa-building',
+        'submenu' => [
+            [
+                'text' => 'Profil',
+                'url'  => 'instansi/profile#profil', // Ini sudah benar
+                'icon' => 'far fa-circle',
+            ],
+            [
+                'text' => 'Gambar',
+                'url'  => 'instansi/profile#gambar', // Ini sudah benar
+                'icon' => 'far fa-circle',
+            ],
+            [
+                'text' => 'Alamat',
+                'url'  => 'instansi/profile#alamat', // INI YANG PERLU DIUBAH ATAU PASTIKAN BENAR
+                'icon' => 'far fa-circle',
+            ],
+            [
+                'text' => 'Peta',
+                'url'  => 'instansi/profile#peta', // Ini sudah benar
+                'icon' => 'far fa-circle',
+            ],
+            // HAPUS BARIS INI ATAU KOMENTARI
+            // [
+            //     'text' => 'Kontak & Medsos',
+            //     'url'  => 'instansi/profile#kontak', // Hapus ini
+            //     'icon' => 'far fa-circle',
+            // ],
         ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
+        // BAGIAN INI YANG PERLU DIUBAH:
+        // Tambahkan backslash sebelum '#' di dalam pola regex
+        'active' => ['instansi/profile*', 'regex:#^instansi/profile(\#[a-zA-Z0-9_-]+)?$#'],
+    ],
+
+
+    [
+        'text'    => 'Intansi',
+        'icon'    => 'fas fa-fw fa-user-tie',
+        'can'     => 'admin',
+        'submenu' => [
+            ['text' => 'Manajemen User', 'url' => 'admin/users', 'icon' => 'fas fa-fw fa-users'], 
+            ['text' => 'Manajemen User', 'url' => 'admin/users', 'icon' => 'fas fa-fw fa-users'], 
         ],
 
-        // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'users',
-            'url' => 'admin/user',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+    ],
+
+  
+
+
+    // Menu khusus Guru (tampil jika user memiliki gate 'guru')
+    [
+        'text'    => 'Menu Guru',
+        'icon'    => 'fas fa-fw fa-chalkboard-teacher',
+        'can'     => 'guru',
+        'submenu' => [
+            ['text' => 'Dashboard Guru', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
+            ['text' => 'Materi Pelajaran', 'url' => 'guru/materi', 'icon' => 'fas fa-fw fa-book'], // Contoh link lain
         ],
     ],
+
+    // Menu khusus Siswa (tampil jika user memiliki gate 'siswa')
+    [
+        'text'    => 'Menu Siswa',
+        'icon'    => 'fas fa-fw fa-user-graduate',
+        'can'     => 'siswa',
+        'submenu' => [
+            ['text' => 'Dashboard Siswa', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
+            ['text' => 'Tugas-tugas', 'url' => 'siswa/tugas', 'icon' => 'fas fa-fw fa-tasks'], // Contoh link lain
+        ],
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -518,7 +504,7 @@ return [
     'iframe' => [
         'default_tab' => [
             'url' => null,
-            'title' => 'Cek',
+            'title' => null,
         ],
         'buttons' => [
             'close' => true,
