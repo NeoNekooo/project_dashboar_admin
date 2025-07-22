@@ -1,4 +1,4 @@
-@extends('adminlte::auth.auth-page') {{-- Tetap menggunakan layout default Anda --}}
+@extends('layouts.app') {{-- Tetap menggunakan layout default Anda --}}
 
 @section('content')
     <div class="container d-flex justify-content-center align-items-center min-vh-100">

@@ -63,12 +63,9 @@ return [
     |
     */
 
-    // Di config/adminlte.php:
-'logo' => $instansi->nama ?? '<b>Admin</b>LTE', // Langsung pakai variabel, bukan Closure
-'logo_img' => isset($instansi) && $instansi->logo 
-    ? 'storage/' . $instansi->logo 
-    : 'vendor/adminlte/dist/img/AdminLTELogo.png',
-'logo_img_alt' => $instansi->nama ?? 'Admin Logo',
+    'logo' => 'PPDB', // Tetap statis di sini, dinamisasi dilakukan di Blade
+    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png', // Tetap statis di sini
+    'logo_img_alt' => 'Admin Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +81,7 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => false, // Tetap false agar logo di config 'logo' yang dipakai
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
             'alt' => 'Auth Logo',
@@ -110,7 +107,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
@@ -156,7 +153,7 @@ return [
     'layout_boxed' => null,
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
-    'layout_fixed_footer' => null,
+    'layout_fixed_footer' => '',
     'layout_dark_mode' => null,
 
     /*
@@ -174,7 +171,7 @@ return [
     'classes_auth_card' => 'card-outline card-primary',
     'classes_auth_header' => '',
     'classes_auth_body' => '',
-    'classes_auth_footer' => '',
+    'classes_auth_footer' => '', // Ini sudah Anda tambahkan untuk menyembunyikan footer di halaman auth
     'classes_auth_icon' => '',
     'classes_auth_btn' => 'btn-flat btn-primary',
 
@@ -298,88 +295,155 @@ return [
     |
     */
     'menu' => [
-    // Item menu Dashboard Utama (selalu tampil untuk semua yang login)
-    [
-        'text'        => 'Dashboard',
-        'url'         => 'dashboard', // Atau 'dashboard.main' jika Anda pakai route() helper
-        'icon'        => 'fas fa-fw fa-tachometer-alt',
-        'can'         => 'user', // Tampil jika user terautentikasi (gate 'user' selalu true)
-    ],
-
-    // Menu khusus Admin (tampil jika user memiliki gate 'admin')
-[
-        'text' => 'INSTANSI',
-        'icon' => 'fas fa-building',
-        'submenu' => [
-            [
-                'text' => 'Profil',
-                'url'  => 'instansi/profile#profil', // Ini sudah benar
-                'icon' => 'far fa-circle',
-            ],
-            [
-                'text' => 'Gambar',
-                'url'  => 'instansi/profile#gambar', // Ini sudah benar
-                'icon' => 'far fa-circle',
-            ],
-            [
-                'text' => 'Alamat',
-                'url'  => 'instansi/profile#alamat', // INI YANG PERLU DIUBAH ATAU PASTIKAN BENAR
-                'icon' => 'far fa-circle',
-            ],
-            [
-                'text' => 'Peta',
-                'url'  => 'instansi/profile#peta', // Ini sudah benar
-                'icon' => 'far fa-circle',
-            ],
-            // HAPUS BARIS INI ATAU KOMENTARI
-            // [
-            //     'text' => 'Kontak & Medsos',
-            //     'url'  => 'instansi/profile#kontak', // Hapus ini
-            //     'icon' => 'far fa-circle',
-            // ],
-        ],
-        // BAGIAN INI YANG PERLU DIUBAH:
-        // Tambahkan backslash sebelum '#' di dalam pola regex
-        'active' => ['instansi/profile*', 'regex:#^instansi/profile(\#[a-zA-Z0-9_-]+)?$#'],
-    ],
-
-
-    [
-        'text'    => 'Intansi',
-        'icon'    => 'fas fa-fw fa-user-tie',
-        'can'     => 'admin',
-        'submenu' => [
-            ['text' => 'Manajemen User', 'url' => 'admin/users', 'icon' => 'fas fa-fw fa-users'], 
-            ['text' => 'Manajemen User', 'url' => 'admin/users', 'icon' => 'fas fa-fw fa-users'], 
+        // Item menu Dashboard Utama (selalu tampil untuk semua yang login)
+        [
+            'text'          => 'Dashboard',
+            'url'           => 'dashboard', // Atau 'dashboard.main' jika Anda pakai route() helper
+            'icon'          => 'fas fa-fw fa-tachometer-alt',
+            'can'           => 'user', // Tampil jika user terautentikasi (gate 'user' selalu true)
         ],
 
-    ],
+        // Menu khusus Admin (tampil jika user memiliki gate 'admin')
+        [
+            'text'          => 'INSTANSI', // Menu ini
+            'icon'          => 'fas fa-building',
+            'can'           => 'admin', // <-- Pastikan ini ada untuk membatasi akses ke admin
+            'submenu'       => [
+                [
+                    'text' => 'Profil',
+                    'url'  => 'instansi/profile#profil',
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Gambar',
+                    'url'  => 'instansi/profile#gambar',
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Alamat',
+                    'url'  => 'instansi/profile#alamat',
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Peta',
+                    'url'  => 'instansi/profile#peta',
+                    'icon' => 'far fa-circle',
+                ],
+            ],
+            // Pastikan regex untuk 'active' sudah benar
+            'active' => ['instansi/profile*', 'regex:#^instansi/profile(\#[a-zA-Z0-9_-]+)?$#'],
+        ],
 
-  
+        [
+            'text'          => 'Kepegawaian',
+            'icon'          => 'fas fa-fw fa-users',
+            'submenu'       => [
+                [
+                    'text'      => 'Data Pegawai',
+                    'icon'      => 'far fa-address-card', // Ikon untuk sub-menu Data Pegawai
+                    'submenu'   => [ // Bagian ini penting untuk membuat bersarang
+                        [
+                            'text' => 'Pendidik Aktif',
+                            'route'  => 'kepegawaian.pendidik.index', // Menggunakan route name
+                            'icon' => 'fas fa-user-check', // Ikon untuk pendidik aktif
+                            'active' => ['kepegawaian/pendidik'] // Active untuk /pendidik dan turunannya, kecuali /tidak-aktif dan /tenaga-kependidikan
+                        ],
+                        [
+                            'text' => 'Tenaga Kependidikan',
+                            'route'  => 'kepegawaian.tenaga_kependidikan.index', // Menggunakan route name
+                            'icon' => 'fas fa-user-tie', // Ikon untuk tenaga kependidikan
+                            'active' => ['kepegawaian/tenaga-kependidikan', 'kepegawaian/tenaga-kependidikan/*'] // Active khusus untuk tenaga kependidikan
+                        ],
+                        [
+                            'text' => 'pegawai Tidak Aktif',
+                            'route'  => 'kepegawaian.pendidik.inactive', // Menggunakan route name
+                            'icon' => 'fas fa-user-times', // Ikon untuk pendidik tidak aktif
+                            'active' => ['kepegawaian/pendidik/tidak-aktif'] // Active khusus untuk /tidak-aktif
+                        ],
+                    ],
+                    'active' => ['kepegawaian/pendidik*', 'kepegawaian/tenaga-kependidikan*'] // Active untuk semua yang ada di bawah Data Pegawai (misal: /pendidik, /pendidik/create, /pendidik/tidak-aktif, /tenaga-kependidikan)
+                ],
+                 [
+                'text' => 'Tugas Pokok',
+                'url'  => 'akademik/main_tasks', // URL yang mengarah ke daftar tugas pokok
+                'icon' => 'far fa-circle',
+                'active' => ['akademik/main_tasks*'], // Aktifkan ketika berada di halaman tugas pokok
+                ],
+                [
+                    'text' => 'Pelaksanaan Tugas Harian',
+                    'url'  => '#',
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Mutasi Pegawai',
+                    'url'  => '#',
+                    'icon' => 'far fa-circle',
+                ],
+            ],
+        ],
 
+        [
+            'text'          => 'Akademik',
+            'icon'          => 'fas fa-fw fa-building', // Menggunakan icon gedung sebagai representasi akademik
+            'submenu'       => [
+                [
+                    'text' => 'Tahun Pelajaran',
+                    'url'  => 'akademik/tapel',
+                    'icon' => 'far fa-circle',
+                ],
+                // Tambahkan menu Semester di sini
+                [
+                    'text' => 'Semester',
+                    'url'  => 'akademik/semesters', // URL yang mengarah ke daftar semester
+                    'icon' => 'far fa-circle',
+                    'active' => ['akademik/semesters'], // Aktifkan ketika berada di halaman semester
+                ],
+                [
+                    'text' => 'Program Keahlian',
+                    'url'  => '#', // Placeholder URL
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Paket Keahlian',
+                    'url'  => '#', // Placeholder URL
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Mata Pelajaran',
+                    'url'  => '#', // Placeholder URL
+                    'icon' => 'far fa-circle',
+                ],
+                [
+                    'text' => 'Ekstrakurikuler',
+                    'url'  => '#', // Placeholder URL
+                    'icon' => 'far fa-circle',
+                ],
+            ],
+            'active' => ['akademik/*', 'regex:#^akademik(\#[a-zA-Z0-9_-]+)?$#'], // Aktifkan jika ada URL spesifik
+        ],
 
-    // Menu khusus Guru (tampil jika user memiliki gate 'guru')
-    [
-        'text'    => 'Menu Guru',
-        'icon'    => 'fas fa-fw fa-chalkboard-teacher',
-        'can'     => 'guru',
-        'submenu' => [
-            ['text' => 'Dashboard Guru', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
-            ['text' => 'Materi Pelajaran', 'url' => 'guru/materi', 'icon' => 'fas fa-fw fa-book'], // Contoh link lain
+        // Menu khusus Guru (tampil jika user memiliki gate 'guru')
+        [
+            'text'          => 'Menu Guru',
+            'icon'          => 'fas fa-fw fa-chalkboard-teacher',
+            'can'           => 'guru',
+            'submenu'       => [
+                ['text' => 'Dashboard Guru', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
+                ['text' => 'Materi Pelajaran', 'url' => 'guru/materi', 'icon' => 'fas fa-fw fa-book'],
+            ],
+        ],
+
+        // Menu khusus Siswa (tampil jika user memiliki gate 'siswa')
+        [
+            'text'          => 'Menu Siswa',
+            'icon'          => 'fas fa-fw fa-user-graduate',
+            'can'           => 'siswa',
+            'submenu'       => [
+                ['text' => 'Dashboard Siswa', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
+                ['text' => 'Tugas-tugas', 'url' => 'siswa/tugas', 'icon' => 'fas fa-fw fa-tasks'],
+            ],
         ],
     ],
-
-    // Menu khusus Siswa (tampil jika user memiliki gate 'siswa')
-    [
-        'text'    => 'Menu Siswa',
-        'icon'    => 'fas fa-fw fa-user-graduate',
-        'can'     => 'siswa',
-        'submenu' => [
-            ['text' => 'Dashboard Siswa', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
-            ['text' => 'Tugas-tugas', 'url' => 'siswa/tugas', 'icon' => 'fas fa-fw fa-tasks'], // Contoh link lain
-        ],
-    ],
-],
 
     /*
     |--------------------------------------------------------------------------
