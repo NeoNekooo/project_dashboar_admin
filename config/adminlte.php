@@ -337,6 +337,7 @@ return [
         [
             'text'          => 'Kepegawaian',
             'icon'          => 'fas fa-fw fa-users',
+            'can'           => 'admin',
             'submenu'       => [
                 [
                     'text'      => 'Data Pegawai',
@@ -384,7 +385,8 @@ return [
 
         [
             'text'          => 'Akademik',
-            'icon'          => 'fas fa-fw fa-building', // Menggunakan icon gedung sebagai representasi akademik
+            'icon'          => 'fas fa-fw fa-building',
+            'can'           => 'admin',
             'submenu'       => [
                 [
                     'text' => 'Tahun Pelajaran',
@@ -428,7 +430,6 @@ return [
             'icon'          => 'fas fa-fw fa-chalkboard-teacher',
             'can'           => 'guru',
             'submenu'       => [
-                ['text' => 'Dashboard Guru', 'url' => 'dashboard', 'icon' => 'fas fa-fw fa-tachometer-alt'],
                 ['text' => 'Materi Pelajaran', 'url' => 'guru/materi', 'icon' => 'fas fa-fw fa-book'],
             ],
         ],
