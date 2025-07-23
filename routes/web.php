@@ -8,7 +8,19 @@ use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\TapelController;
 use App\Http\Controllers\PendidikController;
 use App\Http\Controllers\SemesterController;
-use App\Http\Controllers\MainTaskController; // Add this
+use App\Http\Controllers\PegawaiTugasController;
+use App\Http\Controllers\DaftarKelasController; // Pastikan ini diimpor
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -27,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('profile', [InstansiController::class, 'update'])->name('instansi.update');
     });
 
-    // Routes for Akademik (Tapel, Semester, and Main Tasks)
+    // Routes for Akademik (Tapel, Semester)
     Route::prefix('akademik')->group(function () {
         Route::get('tapel', [TapelController::class, 'index'])->name('akademik.tapel.index');
         Route::post('tapel', [TapelController::class, 'store'])->name('akademik.tapel.store');
@@ -38,29 +50,24 @@ Route::middleware(['auth'])->group(function () {
 
         // Routes for Semester
         Route::resource('semesters', SemesterController::class)->only(['index', 'update']);
-
-        // Routes for Main Tasks (Add this)
-        Route::resource('main_tasks', MainTaskController::class);
-        Route::post('main_tasks/{main_task}/update-additional-tasks', [MainTaskController::class, 'updateAdditionalTasks'])->name('main_tasks.update-additional-tasks');
+        Route::put('semesters/{semester}/toggle-active', [SemesterController::class, 'update'])->name('semesters.toggle_active');
     });
 
     // Routes for Kepegawaian (Pendidik and Tenaga Kependidikan)
     Route::prefix('kepegawaian')->name('kepegawaian.')->group(function () {
-        // Specific route for inactive educators (teachers)
         Route::get('pendidik/tidak-aktif', [PendidikController::class, 'inactivePendidiks'])->name('pendidik.inactive');
-
-        // Route for active educational staff
         Route::get('tenaga-kependidikan', [PendidikController::class, 'tenagaKependidikanIndex'])->name('tenaga_kependidikan.index');
-
-        // NEW route for inactive educational staff
         Route::get('tenaga-kependidikan/tidak-aktif', [PendidikController::class, 'inactiveTenagaKependidikan'])->name('tenaga_kependidikan.inactive');
-
-        // Resource route for Pendidik (index, create, store, show, edit, update, destroy)
         Route::resource('pendidik', PendidikController::class);
-
-        // Routes for deactivating and activating educators/educational staff
         Route::post('pendidik/{pendidik}/deactivate', [PendidikController::class, 'deactivate'])->name('pendidik.deactivate');
         Route::post('pendidik/{pendidik}/activate', [PendidikController::class, 'activate'])->name('pendidik.activate');
     });
 
+    // Routes for Pegawai Tugas (tetap ada)
+    Route::resource('pegawai_tugas', PegawaiTugasController::class);
+    Route::post('pegawai_tugas/update_single_field', [PegawaiTugasController::class, 'updateSingleField'])->name('pegawai_tugas.update_single_field');
+
+    // Routes for Daftar Kelas (BARU)
+    Route::resource('daftar_kelas', DaftarKelasController::class)->only(['index', 'store', 'destroy']);
+    Route::post('daftar_kelas/update_wali_kelas', [DaftarKelasController::class, 'updateWaliKelas'])->name('daftar_kelas.update_wali_kelas');
 });

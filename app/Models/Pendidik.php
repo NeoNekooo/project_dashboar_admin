@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk akses storage di accessor
+use Illuminate\Support\Facades\Storage; 
 
 class Pendidik extends Model
 {
     use HasFactory;
 
+    protected $table = 'pendidiks'; 
     protected $fillable = [
         'foto',
         'nama_lengkap',
@@ -44,6 +45,15 @@ class Pendidik extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
     ];
+
+    /**
+     * Define the relationship to the PegawaiTugas model.
+     * One Pendidik can have many PegawaiTugas.
+     */
+    public function tugas()
+    {
+        return $this->hasMany(PegawaiTugas::class, 'pegawai_id', 'id');
+    }
 
     // Accessor untuk mendapatkan URL foto
     public function getFotoUrlAttribute()

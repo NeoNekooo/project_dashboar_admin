@@ -356,29 +356,19 @@ return [
                             'active' => ['kepegawaian/tenaga-kependidikan', 'kepegawaian/tenaga-kependidikan/*'] // Active khusus untuk tenaga kependidikan
                         ],
                         [
-                            'text' => 'pegawai Tidak Aktif',
+                            'text' => 'Pegawai Tidak Aktif',
                             'route'  => 'kepegawaian.pendidik.inactive', // Menggunakan route name
                             'icon' => 'fas fa-user-times', // Ikon untuk pendidik tidak aktif
                             'active' => ['kepegawaian/pendidik/tidak-aktif'] // Active khusus untuk /tidak-aktif
                         ],
+                        [
+                            'text' => 'Pegawai Penugasan',
+                            'route' => 'pegawai_tugas.index', // Menggunakan rute yang sudah ada dan benar
+                            'icon' => 'fas fa-clipboard-list', // Contoh ikon
+                            'active' => ['pegawai_tugas*'], // Aktifkan ketika berada di halaman pegawai_tugas
+                        ],
                     ],
                     'active' => ['kepegawaian/pendidik*', 'kepegawaian/tenaga-kependidikan*'] // Active untuk semua yang ada di bawah Data Pegawai (misal: /pendidik, /pendidik/create, /pendidik/tidak-aktif, /tenaga-kependidikan)
-                ],
-                 [
-                'text' => 'Tugas Pokok',
-                'url'  => 'akademik/main_tasks', // URL yang mengarah ke daftar tugas pokok
-                'icon' => 'far fa-circle',
-                'active' => ['akademik/main_tasks*'], // Aktifkan ketika berada di halaman tugas pokok
-                ],
-                [
-                    'text' => 'Pelaksanaan Tugas Harian',
-                    'url'  => '#',
-                    'icon' => 'far fa-circle',
-                ],
-                [
-                    'text' => 'Mutasi Pegawai',
-                    'url'  => '#',
-                    'icon' => 'far fa-circle',
                 ],
             ],
         ],
@@ -400,6 +390,14 @@ return [
                     'icon' => 'far fa-circle',
                     'active' => ['akademik/semesters'], // Aktifkan ketika berada di halaman semester
                 ],
+                // >>> BARIS BARU UNTUK DAFTAR KELAS <<<
+                [
+                    'text' => 'Kelas',
+                    'route' => 'daftar_kelas.index', // Menggunakan route name
+                    'icon' => 'far fa-circle', // Ikon standar
+                    'active' => ['daftar_kelas*'], // Aktifkan ketika berada di halaman daftar_kelas
+                ],
+                // >>> AKHIR BARIS BARU <<<
                 [
                     'text' => 'Program Keahlian',
                     'url'  => '#', // Placeholder URL

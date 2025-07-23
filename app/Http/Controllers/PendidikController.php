@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pendidik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log; // Added Log import for consistency
 
 class PendidikController extends Controller
 {
@@ -39,9 +40,9 @@ class PendidikController extends Controller
     {
         // Ambil tenaga kependidikan yang aktif (tipe_pegawai BUKAN 'Pendidik' dan status 'Aktif')
         $tenagaKependidikan = Pendidik::where('tipe_pegawai', '!=', 'Pendidik')
-                                      ->where('status', 'Aktif')
-                                      ->orderBy('nama_lengkap', 'asc')
-                                      ->get();
+                                     ->where('status', 'Aktif')
+                                     ->orderBy('nama_lengkap', 'asc')
+                                     ->get();
 
         return view('kepegawaian.tenaga_kependidikan.index', compact('tenagaKependidikan'));
     }
@@ -56,9 +57,9 @@ class PendidikController extends Controller
     {
         // Ambil tenaga kependidikan yang tidak aktif (tipe_pegawai BUKAN 'Pendidik' dan status 'Tidak Aktif')
         $tenagaKependidikan = Pendidik::where('tipe_pegawai', '!=', 'Pendidik')
-                                      ->where('status', 'Tidak Aktif')
-                                      ->orderBy('nama_lengkap', 'asc')
-                                      ->get();
+                                     ->where('status', 'Tidak Aktif')
+                                     ->orderBy('nama_lengkap', 'asc')
+                                     ->get();
 
         return view('kepegawaian.tenaga_kependidikan.inactive_index', compact('tenagaKependidikan'));
     }
@@ -179,7 +180,7 @@ class PendidikController extends Controller
 
         $pendidik->update($validatedData);
 
-        // Redirect berdasarkan tipe_pegawai setelah update
+        // --- PERBAIKAN LOGIKA REDIRECT DI SINI ---
         if ($pendidik->tipe_pegawai == 'Pendidik') {
             if ($pendidik->status === 'Tidak Aktif') {
                 return redirect()->route('kepegawaian.pendidik.inactive')
@@ -187,9 +188,11 @@ class PendidikController extends Controller
             }
             return redirect()->route('kepegawaian.pendidik.index')
                              ->with('success', 'Data Pendidik berhasil diperbarui.');
-        } else {
-            // Untuk tenaga kependidikan, selalu kembali ke daftar tenaga kependidikan aktif
-            // Jika statusnya 'Tidak Aktif', akan otomatis masuk ke daftar tidak aktif
+        } else { // Ini adalah Tenaga Kependidikan
+            if ($pendidik->status === 'Tidak Aktif') {
+                return redirect()->route('kepegawaian.tenaga_kependidikan.inactive')
+                                 ->with('success', 'Data Tenaga Kependidikan berhasil diperbarui dan status menjadi Tidak Aktif.');
+            }
             return redirect()->route('kepegawaian.tenaga_kependidikan.index')
                              ->with('success', 'Data Tenaga Kependidikan berhasil diperbarui.');
         }
@@ -199,12 +202,13 @@ class PendidikController extends Controller
     {
         $pendidik->update(['status' => 'Tidak Aktif']);
 
-        // Redirect berdasarkan tipe_pegawai
+        // --- PERBAIKAN LOGIKA REDIRECT DI SINI ---
         if ($pendidik->tipe_pegawai == 'Pendidik') {
-            return redirect()->route('kepegawaian.pendidik.index')
+            // Setelah dinonaktifkan, redirect ke daftar pendidik tidak aktif
+            return redirect()->route('kepegawaian.pendidik.inactive')
                              ->with('success', 'Status Pendidik berhasil diubah menjadi Tidak Aktif.');
-        } else {
-            // Jika tenaga kependidikan, redirect ke daftar tenaga kependidikan tidak aktif
+        } else { // Tenaga Kependidikan
+            // Setelah dinonaktifkan, redirect ke daftar tenaga kependidikan tidak aktif
             return redirect()->route('kepegawaian.tenaga_kependidikan.inactive')
                              ->with('success', 'Status Tenaga Kependidikan berhasil diubah menjadi Tidak Aktif.');
         }
@@ -214,12 +218,13 @@ class PendidikController extends Controller
     {
         $pendidik->update(['status' => 'Aktif']);
 
-        // Redirect berdasarkan tipe_pegawai
+        // --- PERBAIKAN LOGIKA REDIRECT DI SINI ---
         if ($pendidik->tipe_pegawai == 'Pendidik') {
-            return redirect()->route('kepegawaian.pendidik.inactive')
+            // Setelah diaktifkan, redirect ke daftar pendidik aktif
+            return redirect()->route('kepegawaian.pendidik.index')
                              ->with('success', 'Status Pendidik berhasil diubah menjadi Aktif.');
-        } else {
-            // Jika tenaga kependidikan, redirect ke daftar tenaga kependidikan aktif
+        } else { // Tenaga Kependidikan
+            // Setelah diaktifkan, redirect ke daftar tenaga kependidikan aktif
             return redirect()->route('kepegawaian.tenaga_kependidikan.index')
                              ->with('success', 'Status Tenaga Kependidikan berhasil diubah menjadi Aktif.');
         }
